@@ -1,0 +1,35 @@
+version: 0.1
+component: build
+timeoutInSeconds: 6000
+shell: bash
+failImmediatelyOnError: true
+env:
+  exportedVariables:
+    - BuildDotnetServiceVersion
+    - ImagePath
+    - ImageTag
+
+steps:
+  - type: Command
+    name: "Define unique image tag"
+    timeoutInSeconds: 40
+    command: |
+      ImagePath=`echo ${imageName}:${imageVersion}`
+      ImageTag=`echo ${imageTag}`
+      echo "ImagePath: " ${imageName}:${imageVersion}
+
+  - type: Command
+    timeoutInSeconds: 400
+    name: "Dockerizer"
+    command: |
+      BuildDotnetServiceVersion=`echo ${OCI_BUILD_RUN_ID} | rev | cut -c 1-7`
+      echo "Build DotNet Service Version: " $BuildDotnetServiceVersion
+      docker build -t build-dotnet-service -f Dockerfile.dotnet .
+
+outputArtifacts:
+  - name: devops-dotnet-image
+    type: DOCKER_IMAGE
+    location: build-dotnet-service
+  - name: devops-dotnet-kube-manifest
+    type: BINARY
+    location: deployment/dotnet.yaml

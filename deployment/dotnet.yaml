@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ${appName}-server #gc-server
+  namespace: ${namespace}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ${appName}-server #gc-server
+  template:
+    metadata:
+      labels:
+        app: ${appName}-server #gc-server
+    spec:
+      containers:
+      - name: ${appName}-server #gc-server
+        image: ${imageName}:${imageVersion} #ap-melbourne-1.ocir.io/apaccpt03/one-click-deployment-image-registry/server:1
+      restartPolicy: Always
+      # imagePullSecrets:
+      # - name: regcred
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ${appName}-server-service #gc-server
+  namespace: ${namespace}
+spec:
+  selector:
+    app: ${appName}-server #gc-server
+  ports:
+  - protocol: TCP
+    port: 80 
+    targetPort: 8000 
+  type: ClusterIP # Consider NodePort or LoadBalancer for external access (explained below)

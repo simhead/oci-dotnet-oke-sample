@@ -1,0 +1,11 @@
+# Use the official ASP.NET Core runtime image
+FROM mcr.microsoft.com/dotnet/samples:aspnetapp
+
+# Set the working directory in the container
+WORKDIR /app
+
+# Expose port 8080 to the outside world
+EXPOSE 8080
+
+# Start the ASP.NET Core application
+CMD ["dotnet", "AspNetSample.dll"]
